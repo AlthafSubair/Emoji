@@ -6,6 +6,8 @@ services:
     plan: free
     region: oregon
     healthCheckPath: /health
+    dockerContext: ./server  # Ensure it builds from the right place
+    dockerfilePath: Dockerfile  # Assuming `Dockerfile` is in `server/`
     envVars:
       - key: PORT
         value: 8080
@@ -13,12 +15,26 @@ services:
         value: production
       - key: MONGO_URI
         sync: false
+
   - name: emoji-caddy
     type: web
     env: docker
     repo: https://github.com/AlthafSubair/Emoji
     plan: free
     region: oregon
+    dockerContext: ./caddy  # Ensure correct build context
+    dockerfilePath: Dockerfile  # Assuming `Dockerfile` is in `caddy/`
     envVars:
       - key: CADDYFILE
         value: /etc/caddy/Caddyfile
+
+  - name: emoji-app
+    type: web
+    env: docker
+    plan: free
+    repo: https://github.com/AlthafSubair/Emoji
+    region: oregon
+    dockerContext: .  # Root directory
+    dockerComposeFile: docker-compose.yml  # Use docker-compose
+
+      
