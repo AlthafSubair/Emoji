@@ -2,12 +2,12 @@ services:
   - name: emoji-backend
     type: web
     env: docker
-    repo: https://github.com/AlthafSubair/Emoji
     plan: free
+    repo: https://github.com/AlthafSubair/Emoji
     region: oregon
     healthCheckPath: /health
-    dockerContext: ./server  # Ensure it builds from the right place
-    dockerfilePath: Dockerfile  # Assuming `Dockerfile` is in `server/`
+    dockerContext: ./server  # Ensure it builds from the `server` directory
+    dockerfilePath: ./server/Dockerfile  # Explicit path to `Dockerfile`
     envVars:
       - key: PORT
         value: 8080
@@ -19,11 +19,11 @@ services:
   - name: emoji-caddy
     type: web
     env: docker
-    repo: https://github.com/AlthafSubair/Emoji
     plan: free
+    repo: https://github.com/AlthafSubair/Emoji
     region: oregon
     dockerContext: ./caddy  # Ensure correct build context
-    dockerfilePath: Dockerfile  # Assuming `Dockerfile` is in `caddy/`
+    dockerfilePath: ./caddy/Dockerfile  # Explicit path to `Dockerfile`
     envVars:
       - key: CADDYFILE
         value: /etc/caddy/Caddyfile
@@ -34,7 +34,6 @@ services:
     plan: free
     repo: https://github.com/AlthafSubair/Emoji
     region: oregon
-    dockerContext: .  # Root directory
-    dockerComposeFile: docker-compose.yml  # Use docker-compose
+    dockerContext: .  # Root directory (leave empty if needed)
+    dockerComposeFile: docker-compose.yml  # Use `docker-compose`
 
-      
