@@ -1,0 +1,24 @@
+services:
+  - name: emoji-backend
+    type: web
+    env: docker
+    repo: https://github.com/AlthafSubair/Emoji
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+  - name: emoji-caddy
+    type: web
+    env: docker
+    repo: https://github.com/AlthafSubair/Emoji
+    plan: free
+    region: oregon
+    envVars:
+      - key: CADDYFILE
+        value: /etc/caddy/Caddyfile

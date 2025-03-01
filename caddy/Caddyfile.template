@@ -1,0 +1,52 @@
+{
+    email your@email.com
+    auto_https disable_redirects
+}
+
+# Redirect www to non-www
+www.${DOMAIN_NAME} {
+    redir https://${DOMAIN_NAME}{uri} permanent
+}
+
+# Serve the frontend
+${DOMAIN_NAME} {
+    encode gzip
+    reverse_proxy client:80
+}
+
+# API Server
+api.${DOMAIN_NAME} {
+    reverse_proxy api:3000
+
+    header {
+        -X-Powered-By
+        -Server
+
+        # Enable HSTS
+        Strict-Transport-Security max-age=31536000;
+
+        # Prevent MIME type sniffing
+        X-Content-Type-Options nosniff
+
+        # Clickjacking protection
+        X-Frame-Options DENY
+
+        # XSS Protection
+        X-XSS-Protection "1; mode=block"
+    }
+
+    rate_limit {
+        # Limit requests based on IP address
+        zone api_limit {
+            key {remote_host}
+            events 100
+            window 1m
+        }
+
+        zone burst_limit {
+            key {remote_host}
+            events 20
+            window 1s
+        }
+    }
+}

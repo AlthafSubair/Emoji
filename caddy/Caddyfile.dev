@@ -1,0 +1,13 @@
+
+{
+    local_certs
+}
+
+emoji.localhost {
+    encode gzip
+    reverse_proxy client:5173
+}
+
+emoji.api.localhost {
+    reverse_proxy api:3000
+}

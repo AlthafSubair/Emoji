@@ -1,0 +1,67 @@
+name: emoji
+
+services:
+  mongo:
+    image: mongo:5.0.23
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_data:/data/db  
+    networks:
+      - emoji
+
+  api:
+    build:
+      context: ./server
+      target: development
+    restart: unless-stopped
+    env_file: ./server/.env
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    networks:
+      - emoji
+    depends_on:
+      - mongo
+
+  client:
+    build:
+      context: ./client
+      target: development
+      args:
+        - VITE_API_URL=https://emoji.api.localhost
+    restart: unless-stopped
+    env_file: ./client/.env
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    networks:
+      - emoji
+    command: npm run dev -- --host 0.0.0.0
+    depends_on:
+      - api
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./caddy/Caddyfile.dev:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - emoji
+    depends_on:
+      - api
+      - client
+
+
+
+volumes:
+  mongo_data:
+  caddy_data:
+  caddy_config:
+networks:
+  emoji:
+    driver: bridge
